@@ -27,7 +27,6 @@ def method_not_allowed(error):
 
 @app.errorhandler(ServerError)
 def handle_server_error(error):
-    print('caught the server error')
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
