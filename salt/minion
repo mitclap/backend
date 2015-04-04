@@ -9,4 +9,4 @@ failhard: True
 
 file_roots:
   base:
-    - /srv/salt/base
+    - /vagrant/salt/states/base

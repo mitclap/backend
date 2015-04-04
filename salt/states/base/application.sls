@@ -1,3 +1,5 @@
-python3:
+application-packages:
   pkg.installed:
-    - version: 3.4.0-0ubuntu2
+    - pkgs:
+      - python3: 3.4.3-1
+      - python3-virtualenv: 1.11.6+ds-1

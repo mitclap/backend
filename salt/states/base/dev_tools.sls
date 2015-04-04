@@ -1,3 +1,3 @@
 git:
   pkg.installed:
-    - version: 1:1.9.1-1ubuntu0.1
+    - version: 1:2.1.4-2.1

@@ -1,4 +1,16 @@
 = Backend service for Passel.
+:source-highlighter: highlightjs
+
+== Contributing
+
+Note: you need to enter the vm and run
+[source,bash]
+----
+sudo chmod a-x /sbin/initctl
+----
+before shared folders and provisioning through vagrant will work.
+
+This is a workaround for link:https://github.com/mitchellh/vagrant/issues/5377[Issue #5377] with vagrant.
 
 == License
 
