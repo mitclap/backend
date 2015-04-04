@@ -16,7 +16,7 @@ To make a virtualenv, run
 [source, sh]
 ----
 cd /vagrant
-python3 -m virtualenv --python=python3 venv3
+virtualenv venv
 ----
 
 The rest of these instructions assume you have cd'd to /vagrant.
@@ -24,7 +24,7 @@ The rest of these instructions assume you have cd'd to /vagrant.
 Make sure to activate it with
 [source,sh]
 ----
-source venv3/bin/activate
+source venv/bin/activate
 ----
 
 Then, install the dependencies with

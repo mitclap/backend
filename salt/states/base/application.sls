@@ -1,5 +1,7 @@
 application-packages:
   pkg.installed:
     - pkgs:
-      - python3: 3.4.3-1
+      - python: 2.7.9-1
+      - python-dev: 2.7.9-1
       - python3-virtualenv: 1.11.6+ds-1
+    - install_recommends: False
