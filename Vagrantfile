@@ -1,7 +1,7 @@
 Vagrant.configure(2) do |config|
   config.vm.box = 'larryli/vivid64'
 
-  config.vm.network 'forwarded_port', guest:5000, host:5000, host_ip: '127.0.0.1'
+  config.vm.network 'forwarded_port', guest:5000, host:5000 # Exposed for development
 
   config.vm.synced_folder 'salt/states', '/srv/salt'
 
