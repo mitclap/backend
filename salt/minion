@@ -1,0 +1,12 @@
+# Prevent generation of minion_id file
+id: vagrant
+
+file_client: local
+
+autoload_dynamic_modules: False
+
+failhard: True
+
+file_roots:
+  base:
+    - /srv/salt/base
