@@ -17,7 +17,7 @@ class ServerError(Exception):
 
 class BadDataError(ServerError):
     message = "Your data is bad and you should feel bad."
-    status_code = 403
+    status_code = 400
 
 class NotFoundError(ServerError):
     message = "Sorry, I couldn't find that for you."

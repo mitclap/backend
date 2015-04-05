@@ -5,4 +5,5 @@ with app.app_context():
 
 if __name__=="__main__":
     port = app.config.get('PORT', 5000)
-    socketio.run(app, host='0.0.0.0', port=port) # For vagrant pass-through
+   # socketio.run(app, host='0.0.0.0', port=port) # For vagrant pass-through
+    app.run(host='0.0.0.0', port=port, debug=True)
