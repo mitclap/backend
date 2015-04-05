@@ -53,7 +53,7 @@ def signup():
     if not form.validate_on_submit():
       raise BadDataError()
     username = form.username.data
-    public_key = form.public_key.data
+    public_key = form.publicKey.data
     if Account.lookup_from_username(username) != None:
       raise ServerError('This account already exists!', status_code=409)
     with db_safety() as session:

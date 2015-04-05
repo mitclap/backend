@@ -4,4 +4,4 @@ from wtforms.validators import InputRequired, Length, Regexp
 
 class SignupForm(Form):
     username = TextField(validators=[InputRequired(), Length(min=1, max=30), Regexp("^[a-zA-Z0-9]+$")])
-    public_key = TextField(validators=[InputRequired()]) # Add Length and Regexp as required
+    publicKey = TextField(validators=[InputRequired()]) # Add Length and Regexp as required
