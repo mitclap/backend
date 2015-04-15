@@ -1,5 +1,6 @@
 Vagrant.configure(2) do |config|
   config.vm.box = 'larryli/vivid64'
+  config.vm.box_version = '20150325'
 
   config.vm.network 'forwarded_port', guest:5000, host:5000 # Exposed for development
 
