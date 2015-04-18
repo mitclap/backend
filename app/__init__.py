@@ -11,7 +11,7 @@ socketio = SocketIO(app)
 # USE ONLY ENV VARS FOR config
 
 from .errors import ServerError, BadDataError, NotFoundError
-from .forms import SignupForm
+from .forms import SignupForm, AddEventForm
 from .models import db, Account, db_safety
 
 app.secret_key = app.config['SECRET_KEY'] # For Flask
@@ -59,3 +59,19 @@ def signup():
     with db_safety() as session:
         account_id = Account.create(session, username, public_key)
     return jsonify({'message': 'Account successfully created'})
+
+@app.route('/events', methods=['POST'])
+def new_event():
+    try:
+      form = AddEventForm(csrf_enabled=False)
+    except Exception as e: # Otherwise there's a 400 that's propagated
+      raise BadDataError()
+    if not form.validate_on_submit():
+      raise BadDataError()
+    name = form.name.data
+    start = form.start.data
+    end = form.end.data
+    description = form.description.data
+    with db_safety() as session:
+        event_id = Event.create(session, name, start, end, description)
+    return jsonify({'message': 'Event successfully created', 'event_id': event_id})
