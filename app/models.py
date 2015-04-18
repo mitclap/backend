@@ -72,3 +72,22 @@ class Event(db.Model):
         self.start = start
         self.end = end
         self.description = description
+
+class Attendees(db.Model):
+    __tablename__ = 'attendees'
+
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer(), db.ForeignKey('events.id'))
+    account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
+
+    @staticmethod
+    def create(session, event_id, account_id):
+        new_attendee = Account(event_id, account_id)
+        session.add(new_attendee)
+        session.flush()
+
+        return new_attendee.id
+
+    def __init__(self, event_id, account_id):
+        self.event_id = event_id
+        self.account_id = account_id
