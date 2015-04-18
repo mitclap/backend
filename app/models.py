@@ -49,3 +49,26 @@ class Account(db.Model):
     def __init__(self, username, public_key):
         self.username = username
         self.public_key = public_key
+
+class Event(db.Model):
+    __tablename__ = 'events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30), unique=True)
+    start = db.Column(db.DateTime())
+    end = db.Column(db.DateTime())
+    description = db.Column(db.String(1000))
+
+    @staticmethod
+    def create(session, name, start, end, description):
+        new_event = Event(username, public_key)
+        session.add(new_event)
+        session.flush()
+
+        return new_event.id
+
+    def __init__(self, name, start, end, description):
+        self.name = name
+        self.start = start
+        self.end = end
+        self.description = description
