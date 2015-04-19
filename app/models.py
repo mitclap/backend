@@ -1,6 +1,9 @@
+from __future__ import print_function
+
 from contextlib import contextmanager
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import func
+
 
 from .errors import ServerError
 
@@ -54,14 +57,14 @@ class Event(db.Model):
     __tablename__ = 'events'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), unique=True)
+    name = db.Column(db.String(30))
     start = db.Column(db.DateTime())
     end = db.Column(db.DateTime())
     description = db.Column(db.String(1000))
 
     @staticmethod
     def create(session, name, start, end, description):
-        new_event = Event(username, public_key)
+        new_event = Event(name, start, end, description)
         session.add(new_event)
         session.flush()
 
@@ -73,7 +76,7 @@ class Event(db.Model):
         self.end = end
         self.description = description
 
-class Attendees(db.Model):
+class Attendee(db.Model):
     __tablename__ = 'attendees'
 
     id = db.Column(db.Integer, primary_key=True)

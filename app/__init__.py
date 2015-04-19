@@ -12,7 +12,7 @@ socketio = SocketIO(app)
 
 from .errors import ServerError, BadDataError, NotFoundError
 from .forms import SignupForm, AddEventForm
-from .models import db, Account, db_safety
+from .models import db, db_safety, Account, Event, Attendee, session_scope
 
 app.secret_key = app.config['SECRET_KEY'] # For Flask
 
@@ -72,6 +72,8 @@ def new_event():
     start = form.start.data
     end = form.end.data
     description = form.description.data
+    if start > end:
+      raise BadDataError()
     with db_safety() as session:
         event_id = Event.create(session, name, start, end, description)
     return jsonify({'message': 'Event successfully created', 'event_id': event_id})
