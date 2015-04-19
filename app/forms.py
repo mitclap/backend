@@ -8,6 +8,6 @@ class SignupForm(Form):
 
 class AddEventForm(Form):
     name = TextField(validators=[InputRequired(), Length(min=1, max=30), Regexp("^[a-zA-Z0-9]+$")])
-    start = DateTimeField(format='%Y-%m-%dT%H:%M:00.000+0000', validators=[InputRequired()])
-    end = DateTimeField(format='%Y-%m-%dT%H:%M:00.000+0000', validators=[InputRequired()])
+    start = DateTimeField(format='%Y-%m-%dT%H:%M:%S.000%z', validators=[InputRequired()])
+    end = DateTimeField(format='%Y-%m-%dT%H:%M:%S.000%z', validators=[InputRequired()])
     description = TextField(validators=[InputRequired(), Length(min=0, max=1000)])
