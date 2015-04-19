@@ -72,7 +72,7 @@ def new_event():
     start = form.start.data
     end = form.end.data
     description = form.description.data
-    if start > end:
+    if start >= end:
       raise BadDataError()
     with db_safety() as session:
         event_id = Event.create(session, name, start, end, description)
