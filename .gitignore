@@ -1,3 +1,4 @@
 .vagrant/
 venv
 **/*.pyc
+/app/test.db
