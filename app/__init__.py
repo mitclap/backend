@@ -2,11 +2,9 @@ from __future__ import print_function
 from os import environ
 
 from flask import Flask, jsonify, request
-from flask_socketio import SocketIO
 
 app = Flask(__name__, static_url_path='/s', instance_relative_config=True)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-socketio = SocketIO(app)
 
 # USE ONLY ENV VARS FOR config
 
@@ -35,14 +33,6 @@ def handle_server_error(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
-
-@socketio.on('connect')
-def test_connect():
-    print('got a connection')
-
-@socketio.on('disconnect')
-def test_disconnect():
-    print('Client disconnected')
 
 @app.route('/accounts', methods=['POST'])
 def signup():
