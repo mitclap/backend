@@ -83,8 +83,12 @@ def get_events():
         # TODO: check authentication simultaneously to avoid TOCTOU
         # TODO: get rest of event info i.e. attendees
         events = session.query(Event) \
-        .join(Attendee, Event.id==Attendee.event_id) \
-        .filter(Attendee.account_id == attendee_id).all()
+          .join(Attendee, Event.id==Attendee.event_id) \
+          .filter(Attendee.account_id == attendee_id).all()
         # TODO: fix serialization
-        events = [{'id': event.id, 'name': event.name, 'description': event.description} for event in events]
+        events = [{'id': event.id,
+          'name': event.name,
+          'start' : event.start.strftime("%Y-%m-%dT%H:%M:%S"), # TODO: extract constant
+          'end' : event.end.strftime("%Y-%m-%dT%H:%M:%S"),
+          'description': event.description} for event in events]
     return jsonify({"events": events})
