@@ -40,3 +40,28 @@ def new_event():
     with db_safety() as session:
         event_id = Event.create(session, name, start, end, description)
     return jsonify({'message': 'Event successfully created', 'event_id': event_id})
+
+@app.route('/events', methods=['GET'])
+# TODO: generalize beyond just user events
+def get_events():
+    # TODO: add pagination
+    attendee_ids = request.args.getlist("attendee_id")
+    if len(attendee_ids) != 1:
+        raise BadDataError()
+    try:
+        attendee_id = int(attendee_ids[0])
+    except ValueError as e:
+        raise BadDataError()
+    with db_safety() as session:
+        # TODO: check authentication simultaneously to avoid TOCTOU
+        # TODO: get rest of event info i.e. attendees
+        events = session.query(Event) \
+          .join(Attendee, Event.id==Attendee.event_id) \
+          .filter(Attendee.account_id == attendee_id).all()
+        # TODO: fix serialization
+        events = [{'id': event.id,
+          'name': event.name,
+          'start' : event.start.strftime("%Y-%m-%dT%H:%M:%S"), # TODO: extract constant
+          'end' : event.end.strftime("%Y-%m-%dT%H:%M:%S"),
+          'description': event.description} for event in events]
+    return jsonify({"events": events})
