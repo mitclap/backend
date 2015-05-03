@@ -84,6 +84,11 @@ class Attendee(db.Model):
     account_id = db.Column(db.Integer(), db.ForeignKey('accounts.id'))
 
     @staticmethod
+    def lookup_from_ids(account_id ,event_id):
+        return Attendee.query.filter((Attendee.account_id == account_id) and \
+            (Attendee.event_id == event_id)).first()
+
+    @staticmethod
     def create(session, event_id, account_id):
         new_attendee = Account(event_id, account_id)
         session.add(new_attendee)
@@ -94,3 +99,26 @@ class Attendee(db.Model):
     def __init__(self, event_id, account_id):
         self.event_id = event_id
         self.account_id = account_id
+
+class Checkin(db.Model):
+    __tablename__ = 'checkins'
+
+    id = db.Column(db.Integer, primary_key=True)
+    attendee_id = db.Column(db.Integer(), db.ForeignKey('attendees.id'))
+    timestamp = db.Column(db.DateTime())
+    latitude = db.Column(db.Float())
+    longitude = db.Column(db.Float())
+
+    @staticmethod
+    def create(session, attendee_id, timestamp, latitude, longitude):
+        new_checkin = Checkin(attendee_id, timestamp, latitude, longitude)
+        session.add(new_checkin)
+        session.flush()
+
+        return new_checkin.id
+
+    def __init__(self, attendee_id, timestamp, latitude, longitude):
+        self.attendee_id = attendee_id
+        self.timestamp = timestamp
+        self.latitude = latitude
+        self.longitude = longitude

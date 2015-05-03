@@ -4,8 +4,8 @@ from flask import jsonify, request
 
 from . import app
 from .errors import ServerError, BadDataError
-from .forms import  SignupForm, AddEventForm
-from .models import db_safety, Account, Event, Attendee
+from .forms import  SignupForm, AddEventForm, CheckinForm
+from .models import db_safety, Account, Event, Attendee, Checkin
 
 @app.route('/accounts', methods=['POST'])
 def signup():
@@ -58,10 +58,36 @@ def get_events():
         events = session.query(Event) \
           .join(Attendee, Event.id==Attendee.event_id) \
           .filter(Attendee.account_id == attendee_id).all()
+        for event in events:
+          attendees = session.query(Attendee) \
+            .filter(Attendee.event_id == event.id).all()
+          event.attendees = []
+          for attendee in attendees:
+            event.attendees.append(attendee.account_id)
         # TODO: fix serialization
         events = [{'id': event.id,
           'name': event.name,
           'start' : event.start.strftime("%Y-%m-%dT%H:%M:%S"), # TODO: extract constant
           'end' : event.end.strftime("%Y-%m-%dT%H:%M:%S"),
-          'description': event.description} for event in events]
+          'description': event.description,
+          'attendees': event.attendees} for event in events
+          ]
     return jsonify({"events": events})
+
+@app.route('/checkins', methods=['POST'])
+def add_checkin():
+    try:
+        form = CheckinForm(csrf_enabled=False)
+    except Exception as e: # Otherwise there's a 400 that's propagated
+        raise BadDataError()
+    if not form.validate_on_submit():
+        raise BadDataError()
+    event_id = form.eventId.data
+    account_id = form.accountId.data
+    timestamp = form.timestamp.data
+    latitude = form.latitude.data
+    longitude = form.longitude.data
+    with db_safety() as session:
+        attendee_id = Attendee.lookup_from_ids(account_id, event_id).id
+        checkin_id = Checkin.create(session, attendee_id, timestamp, latitude, longitude)
+    return jsonify({'message': 'Successfully checked in', 'checkin_id': checkin_id})

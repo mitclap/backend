@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField, DateTimeField
+from wtforms import TextField, DateTimeField, IntegerField, FloatField
 from wtforms.validators import InputRequired, Length, Regexp
 
 class SignupForm(Form):
@@ -11,3 +11,10 @@ class AddEventForm(Form):
     start = DateTimeField(format='%Y-%m-%dT%H:%M:%S', validators=[InputRequired()])
     end = DateTimeField(format='%Y-%m-%dT%H:%M:%S', validators=[InputRequired()])
     description = TextField(validators=[InputRequired(), Length(min=0, max=1000)])
+
+class CheckinForm(Form):
+    eventId = IntegerField(validators=[InputRequired()])
+    accountId = IntegerField(validators=[InputRequired()])
+    timestamp = DateTimeField(format='%Y-%m-%dT%H:%M:%S', validators=[InputRequired()])
+    latitude = FloatField(validators=[InputRequired()])
+    longitude = FloatField(validators=[InputRequired()])
