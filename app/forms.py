@@ -1,6 +1,10 @@
 from flask_wtf import Form
-from wtforms import TextField, DateTimeField, IntegerField, FloatField
+from wtforms import FormField, TextField, DateTimeField, IntegerField, FloatField
 from wtforms.validators import InputRequired, Length, Regexp
+
+class LocationForm(Form):
+    latitude = FloatField(validators=[InputRequired()])
+    longitude = FloatField(validators=[InputRequired()])
 
 class SignupForm(Form):
     username = TextField(validators=[InputRequired(), Length(min=1, max=30), Regexp("^[a-zA-Z0-9]+$")])
@@ -16,5 +20,4 @@ class CheckinForm(Form):
     eventId = IntegerField(validators=[InputRequired()])
     accountId = IntegerField(validators=[InputRequired()])
     timestamp = DateTimeField(format='%Y-%m-%dT%H:%M:%S', validators=[InputRequired()])
-    latitude = FloatField(validators=[InputRequired()])
-    longitude = FloatField(validators=[InputRequired()])
+    location = FormField(LocationForm)

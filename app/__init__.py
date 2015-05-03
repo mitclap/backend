@@ -1,9 +1,13 @@
 from flask import Flask, jsonify
+import wtforms_json
 
 app = Flask(__name__, static_url_path='/s', instance_relative_config=True)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['WTF_CSRF_ENABLED'] = False
 
 # USE ONLY ENV VARS FOR config
+
+wtforms_json.init()
 
 from .errors import ServerError, NotFoundError
 from .models import db

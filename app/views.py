@@ -10,7 +10,7 @@ from .models import db_safety, Account, Event, Attendee, Checkin
 @app.route('/accounts', methods=['POST'])
 def signup():
     try:
-      form = SignupForm(csrf_enabled=False)
+      form = SignupForm.from_json(request.json)
     except Exception as e: # Otherwise there's a 400 that's propagated
       raise BadDataError()
     if not form.validate_on_submit():
@@ -26,7 +26,7 @@ def signup():
 @app.route('/events', methods=['POST'])
 def new_event():
     try:
-      form = AddEventForm(csrf_enabled=False)
+      form = AddEventForm.from_json(request.json)
     except Exception as e: # Otherwise there's a 400 that's propagated
       raise BadDataError()
     if not form.validate_on_submit():
@@ -77,7 +77,7 @@ def get_events():
 @app.route('/checkins', methods=['POST'])
 def add_checkin():
     try:
-        form = CheckinForm(csrf_enabled=False)
+        form = CheckinForm.from_json(request.json)
     except Exception as e: # Otherwise there's a 400 that's propagated
         raise BadDataError()
     if not form.validate_on_submit():
@@ -85,9 +85,9 @@ def add_checkin():
     event_id = form.eventId.data
     account_id = form.accountId.data
     timestamp = form.timestamp.data
-    latitude = form.latitude.data
-    longitude = form.longitude.data
+    latitude = form.location.latitude.data
+    longitude = form.location.longitude.data
     with db_safety() as session:
         attendee_id = Attendee.lookup_from_ids(account_id, event_id).id
         checkin_id = Checkin.create(session, attendee_id, timestamp, latitude, longitude)
-    return jsonify({'message': 'Successfully checked in', 'checkin_id': checkin_id})
+    return jsonify({'message': 'Successfully checked in', 'checkinId': checkin_id})
