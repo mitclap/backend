@@ -91,3 +91,30 @@ def add_checkin():
         attendee_id = Attendee.lookup_from_ids(account_id, event_id).id
         checkin_id = Checkin.create(session, attendee_id, timestamp, latitude, longitude)
     return jsonify({'message': 'Successfully checked in', 'checkinId': checkin_id})
+
+@app.route('/checkins', methods=['GET'])
+def get_checkins():
+    event_ids = request.args.getlist("event_id")
+    if len(event_ids) != 1:
+        raise BadDataError()
+    try:
+        event_id = int(event_ids[0])
+    except ValueError as e:
+        raise BadDataError()
+    with db_safety() as session:
+        attendees = session.query(Attendee).distinct(Attendee.account_id) \
+          .filter(Attendee.event_id == event_id).all()
+        attendee_locations = []
+        for attendee in attendees:
+            attendee_latest_checkin = session.query(Checkin) \
+              .filter(Checkin.attendee_id == attendee.id).order_by(Checkin.timestamp).first()
+            attendee_username = session.query(Account) \
+              .filter(Account.id == attendee.account_id).first()
+            try:
+              attendee_locations.append({"account_id":attendee.account_id, \
+                "username":attendee_username.username, \
+                "latitude":attendee_latest_checkin.latitude, \
+                "longitude":attendee_latest_checkin.longitude})
+            except Exception as e:
+                print e, "attendee probably has not checked in yet" #TODO: make this better
+    return jsonify({"attendee_locations": attendee_locations})
