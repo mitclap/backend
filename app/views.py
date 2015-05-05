@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from flask import jsonify, request
+from flask import jsonify, request, abort
 
 from . import app
 from .errors import ServerError, BadDataError
@@ -72,7 +72,7 @@ def get_events():
           'description': event.description,
           'attendees': event.attendees} for event in events
           ]
-    return jsonify({'message': null, 'data': {'events': events}})
+    return jsonify({'message': '', 'data': {'events': events}})
 
 @app.route('/checkins', methods=['POST'])
 def add_checkin():
@@ -88,8 +88,10 @@ def add_checkin():
     latitude = form.location.latitude.data
     longitude = form.location.longitude.data
     with db_safety() as session:
-        attendee_id = Attendee.lookup_from_ids(account_id, event_id).id
-        checkin_id = Checkin.create(session, attendee_id, timestamp, latitude, longitude)
+        attendee = Attendee.lookup_from_ids(account_id, event_id)
+        if None == attendee:
+            abort(404)
+        checkin_id = Checkin.create(session, attendee.id, timestamp, latitude, longitude)
     return jsonify({'message': 'Checkin successfully created', 'data': {'checkinId': checkin_id}})
 
 @app.route('/checkins', methods=['GET'])
@@ -117,4 +119,4 @@ def get_checkins():
                 'longitude':attendee_latest_checkin.longitude})
             except Exception as e:
                 print e, 'attendee probably has not checked in yet' #TODO: make this better
-    return jsonify({'message': null, 'data': {'attendee_locations': attendee_locations}})
+    return jsonify({'message': '', 'data': {'attendee_locations': attendee_locations}})
