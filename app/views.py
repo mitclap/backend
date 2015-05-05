@@ -21,7 +21,7 @@ def signup():
       raise ServerError('This account already exists!', status_code=409)
     with db_safety() as session:
         account_id = Account.create(session, username, public_key)
-    return jsonify({'message': 'Account successfully created'})
+    return jsonify({'message': 'Account successfully created', 'data': {'accountId': account_id}})
 
 @app.route('/events', methods=['POST'])
 def new_event():
@@ -39,13 +39,13 @@ def new_event():
       raise BadDataError()
     with db_safety() as session:
         event_id = Event.create(session, name, start, end, description)
-    return jsonify({'message': 'Event successfully created', 'event_id': event_id})
+    return jsonify({'message': 'Event successfully created', 'data': {'eventId': event_id}})
 
 @app.route('/events', methods=['GET'])
 # TODO: generalize beyond just user events
 def get_events():
     # TODO: add pagination
-    attendee_ids = request.args.getlist("attendee_id")
+    attendee_ids = request.args.getlist('attendee_id')
     if len(attendee_ids) != 1:
         raise BadDataError()
     try:
@@ -67,12 +67,12 @@ def get_events():
         # TODO: fix serialization
         events = [{'id': event.id,
           'name': event.name,
-          'start' : event.start.strftime("%Y-%m-%dT%H:%M:%S"), # TODO: extract constant
-          'end' : event.end.strftime("%Y-%m-%dT%H:%M:%S"),
+          'start' : event.start.strftime('%Y-%m-%dT%H:%M:%S'), # TODO: extract constant
+          'end' : event.end.strftime('%Y-%m-%dT%H:%M:%S'),
           'description': event.description,
           'attendees': event.attendees} for event in events
           ]
-    return jsonify({"events": events})
+    return jsonify({'message': null, 'data': {'events': events}})
 
 @app.route('/checkins', methods=['POST'])
 def add_checkin():
@@ -90,11 +90,11 @@ def add_checkin():
     with db_safety() as session:
         attendee_id = Attendee.lookup_from_ids(account_id, event_id).id
         checkin_id = Checkin.create(session, attendee_id, timestamp, latitude, longitude)
-    return jsonify({'message': 'Successfully checked in', 'checkinId': checkin_id})
+    return jsonify({'message': 'Checkin successfully created', 'data': {'checkinId': checkin_id}})
 
 @app.route('/checkins', methods=['GET'])
 def get_checkins():
-    event_ids = request.args.getlist("event_id")
+    event_ids = request.args.getlist('event_id')
     if len(event_ids) != 1:
         raise BadDataError()
     try:
@@ -111,10 +111,10 @@ def get_checkins():
             attendee_username = session.query(Account) \
               .filter(Account.id == attendee.account_id).first()
             try:
-              attendee_locations.append({"account_id":attendee.account_id, \
-                "username":attendee_username.username, \
-                "latitude":attendee_latest_checkin.latitude, \
-                "longitude":attendee_latest_checkin.longitude})
+              attendee_locations.append({'account_id':attendee.account_id, \
+                'username':attendee_username.username, \
+                'latitude':attendee_latest_checkin.latitude, \
+                'longitude':attendee_latest_checkin.longitude})
             except Exception as e:
-                print e, "attendee probably has not checked in yet" #TODO: make this better
-    return jsonify({"attendee_locations": attendee_locations})
+                print e, 'attendee probably has not checked in yet' #TODO: make this better
+    return jsonify({'message': null, 'data': {'attendee_locations': attendee_locations}})
